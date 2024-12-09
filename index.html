@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drone Search and Rescue Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <!-- Leaflet Draw CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Simulation Panel -->
+    <div class="simulation">
+      <input type="file" id="simulation-upload" accept="video/mp4,video/avi">
+      <video id="simulation-viewer" controls></video>
+      <p id="upload-message">Upload a simulation file to view here.</p>
+    </div>
+
+    <!-- Right Side: Tables -->
+    <div class="tables">
+      <div class="drone-status">
+        <h3>Drone Status</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Drone ID</th>
+              <th>Battery (%)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Drone 1</td><td>75</td><td>Active</td></tr>
+            <tr><td>Drone 2</td><td>90</td><td>Active</td></tr>
+            <tr><td>Drone 3</td><td>60</td><td>Inactive</td></tr>
+            <tr><td>Drone 4</td><td>50</td><td>Active</td></tr>
+            <tr><td>Drone 5</td><td>30</td><td>Down</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="people-found">
+        <h3>People Found</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Location</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>John</td><td>Sector 1</td></tr>
+            <tr><td>Anna</td><td>Sector 2</td></tr>
+            <tr><td>Tom</td><td>Sector 3</td></tr>
+            <tr><td>Kate</td><td>Sector 4</td></tr>
+            <tr><td>Mike</td><td>Sector 5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="bottom-section">
+      <!-- Interactive Map -->
+      <div class="interactive-map">
+        <div id="map"></div>
+      </div>
+
+      <!-- Path Planning Placeholder -->
+      <div class="path-planning">
+        <p>Path Planning Placeholder</p>
+      </div>
+    </div>
+
+    <!-- Button Section -->
+    <div class="button-panel">
+      <button class="action-button" id="start-button">
+        <img src="start-icon.png" alt="Start" class="button-icon"> Start
+      </button>
+      <button class="action-button" id="stop-button">
+        <img src="stop-icon.png" alt="Stop" class="button-icon"> Stop
+      </button>
+      <button class="action-button" id="wake-button">
+        <img src="wake-icon.png" alt="Wake Up" class="button-icon"> Wake Up
+      </button>
+      <button class="action-button" id="emergency-button">
+        <img src="emergency-icon.png" alt="Emergency Stop" class="button-icon"> Emergency Stop
+      </button>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <!-- Leaflet Draw JS -->
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script>
+    // Initialize the map, centered on New Delhi
+    var map = L.map('map').setView([28.6139, 77.2090], 13);
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add a marker in New Delhi
+    var marker = L.marker([28.6139, 77.2090]).addTo(map);
+
+    // Add a popup to the marker
+    marker.bindPopup("<b>Welcome to New Delhi!</b><br>Capital of India").openPopup();
+
+    // Set up Leaflet.draw control
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    var drawControl = new L.Control.Draw({
+      edit: {
+        featureGroup: drawnItems
+      },
+      draw: {
+        rectangle: true,  // Enable rectangle drawing
+        polygon: false,   // Disable polygon drawing
+        circle: false,    // Disable circle drawing
+        marker: false     // Disable marker drawing
+      }
+    });
+    map.addControl(drawControl);
+
+    // Event listener for when a shape is drawn
+    map.on('draw:created', function(e) {
+      var layer = e.layer;
+      drawnItems.addLayer(layer);
+
+      // Convert the drawn layer to GeoJSON
+      var geojson = layer.toGeoJSON();
+      console.log(geojson);
+
+      // Export the GeoJSON as a file
+      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojson));
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "rectangle.geojson");
+      downloadAnchorNode.click();
+    });
+  </script>
+</body>
+</html>
