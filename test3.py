@@ -10,18 +10,14 @@ left, right = st.columns([3, 1])  # 75% (left) and 25% (right)
 
 # Left Column (75%)
 with left:
-    # Row 1: Simulation Panel - Two Boxes
-    col_sim1, col_sim2 = st.columns(2)
-    
-    with col_sim1:
-        uploaded_file1 = st.file_uploader("Upload Simulation 1", type=["mp4", "avi"])  # No title for file uploader
-        if uploaded_file1 is not None:
-            st.video(uploaded_file1, format="mp4", start_time=0)
-    with col_sim2:
-        uploaded_file2 = st.file_uploader("Upload Simulation 2", type=["mp4", "avi"])  # No title for file uploader
-        if uploaded_file2 is not None:
-            st.video(uploaded_file2, format="mp4", start_time=0)
-    
+    # ELEEVATE Header
+    st.markdown("<h1 style='text-align: center;'>ELEEVATE</h1>", unsafe_allow_html=True)
+
+    # Simulation Panel - Elongated Box for Simulation 1
+    uploaded_file1 = st.file_uploader("Upload Simulation 1", type=["mp4", "avi"])  # No title for file uploader
+    if uploaded_file1 is not None:
+        st.video(uploaded_file1, format="mp4", start_time=0)
+
     st.markdown("<hr style='margin-top: 3px; margin-bottom: 3px;'>", unsafe_allow_html=True)
 
     # Row 2: Interactive Map and Path Planning Placeholder
@@ -43,15 +39,22 @@ with left:
 
 # Right Column (25%)
 with right:
-    # Drone Status Table
+    # Drone Status Table with Buttons Beside Specific Drones
     drone_data = [
-        {"Drone ID": "Drone-1", "Battery (%)": 75, "Status": "Active"},
-        {"Drone ID": "Drone-2", "Battery (%)": 90, "Status": "Active"},
-        {"Drone ID": "Drone-3", "Battery (%)": 60, "Status": "Inactive"},
-        {"Drone ID": "Drone-4", "Battery (%)": 50, "Status": "Active"},
-        {"Drone ID": "Drone-5", "Battery (%)": 40, "Status": "Inactive"},
+        {"Drone ID": "Drone-1", "(%)": 75, "Status": "Active"},
+        {"Drone ID": "Drone-2", "(%)": 90, "Status": "Active"},
+        {"Drone ID": "Drone-3", "(%)": 60, "Status": "Inactive"},
+        {"Drone ID": "Drone-4", "(%)": 50, "Status": "Active"},
+        {"Drone ID": "Drone-5", "(%)": 40, "Status": "Inactive"},
     ]
     df_drone = pd.DataFrame(drone_data)
+
+    # Buttons next to Drone-1 and Drone-4
+    col_buttons = st.columns([1, 1, 1])  # Three columns for buttons next to specific drones
+    
+    col_buttons[0].markdown("<button class='round-button return-button'>POV 1</button>", unsafe_allow_html=True)  # Drone-1
+    col_buttons[2].markdown("<button class='round-button return-button'>POV 4</button>", unsafe_allow_html=True)  # Drone-4
+
     st.dataframe(df_drone, height=220)
 
     st.markdown("<hr style='margin-top: 3px; margin-bottom: 3px;'>", unsafe_allow_html=True)
@@ -61,17 +64,17 @@ with right:
     
     with col_table:
         people_data = [
-            {"Name": "John", "Location": "Sector 1"},
-            {"Name": "Anna", "Location": "Sector 2"},
-            {"Name": "Tom", "Location": "Sector 3"},
-            {"Name": "Kate", "Location": "Sector 4"},
-            {"Name": "Emma", "Location": "Sector 5"},
+            {"Name": "Person1", "Location": "34.0522° N, 118.2437° W"},
+            {"Name": "Person2", "Location": "36.7783° N, 119.4179° W"},
+            {"Name": "Person3", "Location": "40.7128° N, 74.0060° W"},
+            {"Name": "Person4", "Location": "34.0522° N, 118.2437° W"},
+            {"Name": "Person5", "Location": "51.5074° N, 0.1278° W"},
         ]
         df_people = pd.DataFrame(people_data)
         st.dataframe(df_people, height=220)
 
     with col_buttons:
-        # Round Buttons (CSS Styling)
+        # Round Buttons with Different Colors (CSS Styling)
         button_styles = """
         <style>
         .round-button {
@@ -79,24 +82,47 @@ with right:
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background-color: #007BFF;
-            color: white;
             width: 50px;
             height: 50px;
-            margin: -9px auto; /* Reduced spacing between buttons */
+            margin: -8px auto;
             font-size: 14px;
             border: none;
             cursor: pointer;
         }
-        .round-button:hover {
+        .start-button {
+            background-color: #28a745; /* Green */
+            color: white;
+        }
+        .start-button:hover {
+            background-color: #218838;
+        }
+        .stop-button {
+            background-color: #dc3545; /* Red */
+            color: white;
+        }
+        .stop-button:hover {
+            background-color: #c82333;
+        }
+        .fall-button {
+            background-color: #ffc107; /* Yellow */
+            color: black;
+        }
+        .fall-button:hover {
+            background-color: #e0a800;
+        }
+        .return-button {
+            background-color: #007BFF; /* Blue */
+            color: white;
+        }
+        .return-button:hover {
             background-color: #0056b3;
         }
         </style>
         """
         st.markdown(button_styles, unsafe_allow_html=True)
 
-        # Adding Buttons Vertically with Less Margin
-        st.markdown("<button class='round-button'>S</button>", unsafe_allow_html=True)  # Start
-        st.markdown("<button class='round-button'>T</button>", unsafe_allow_html=True)  # Stop
-        st.markdown("<button class='round-button'>W</button>", unsafe_allow_html=True)  # Wake Up
-        st.markdown("<button class='round-button'>E</button>", unsafe_allow_html=True)  # Emergency Stop
+        # Adding Buttons Vertically with New Colors
+        st.markdown("<button class='round-button return-button'>Back</button>", unsafe_allow_html=True)  # Return
+        st.markdown("<button class='round-button fall-button'>Fall</button>", unsafe_allow_html=True)  # Fall
+        st.markdown("<button class='round-button start-button'>Start</button>", unsafe_allow_html=True)  # Start
+    
