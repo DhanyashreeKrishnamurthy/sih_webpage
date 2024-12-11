@@ -136,8 +136,8 @@ with right:
         """
         st.markdown(button_styles, unsafe_allow_html=True)
 
-        # Adding Buttons Vertically with New Colors
-        st.markdown("<button class='round-button return-button'>Back</button>", unsafe_allow_html=True)  # Return
-        st.markdown("<button class='round-button fall-button'>Fall</button>", unsafe_allow_html=True)  # Fall
-        st.markdown("<button class='round-button start-button'>Start</button>", unsafe_allow_html=True)  # Start
-        st.markdown("<button class='round-button h-button'>Hover</button>", unsafe_allow_html=True)  # Hover
+        # Adding Buttons Vertically with Less Margin
+        st.markdown("<button class='round-button'>Start</button>", unsafe_allow_html=True)  # Start
+        st.markdown("<button class='round-button'>Stop</button>", unsafe_allow_html=True)  # Stop
+        st.markdown("<button class='round-button'>Wake</button>", unsafe_allow_html=True)  # Wake Up
+        st.markdown("<button class='round-button'>E.S</button>", unsafe_allow_html=True)  # Emergency Stop
