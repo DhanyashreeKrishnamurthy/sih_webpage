@@ -99,7 +99,7 @@ with right:
         st.markdown(button_styles, unsafe_allow_html=True)
 
         # Adding Buttons Vertically with Less Margin
-        st.markdown("<button class='round-button'>S</button>", unsafe_allow_html=True)  # Start
-        st.markdown("<button class='round-button'>T</button>", unsafe_allow_html=True)  # Stop
-        st.markdown("<button class='round-button'>W</button>", unsafe_allow_html=True)  # Wake Up
-        st.markdown("<button class='round-button'>E</button>", unsafe_allow_html=True)  # Emergency Stop
+        st.markdown("<button class='round-button'>Start</button>", unsafe_allow_html=True)  # Start
+        st.markdown("<button class='round-button'>Stop</button>", unsafe_allow_html=True)  # Stop
+        st.markdown("<button class='round-button'>Wake</button>", unsafe_allow_html=True)  # Wake Up
+        st.markdown("<button class='round-button'>E.S</button>", unsafe_allow_html=True)  # Emergency Stop
