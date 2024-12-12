@@ -6,7 +6,8 @@ import threading
 import queue
 import time
 import folium
-import io
+import leafmap.foliumap as leafmap
+from io import BytesIO
 import base64
 
 # AirSim Camera Handler Class (Previous implementation remains the same)
@@ -101,7 +102,10 @@ airsim_handler = AirSimCameraHandler()
 def create_interactive_map():
     """Create an interactive Folium map"""
     # Default location (can be modified based on actual drone deployment)
-    m = folium.Map(location=[37.7749, -122.4194], zoom_start=10)
+    map_ = leafmap.Map(center=[28.6139, 77.2090], zoom=13)
+    map_.add_marker([28.6139, 77.2090], popup="Welcome to New Delhi! Capital of India")
+    map_.to_streamlit(height=500)
+    # m = folium.Map(location=[37.7749, -122.4194], zoom_start=10)
     
     # Add markers for drone locations
     drone_locations = [
@@ -122,7 +126,7 @@ def create_interactive_map():
             location=[drone['lat'], drone['lon']],
             popup=popup_text,
             icon=folium.Icon(color=color, icon='plane')
-        ).add_to(m)
+        ).add_to(map_)
     
     # People found markers
     people_locations = [
@@ -139,10 +143,10 @@ def create_interactive_map():
             location=[person['lat'], person['lon']],
             popup=popup_text,
             icon=folium.Icon(color='blue', icon='user')
-        ).add_to(m)
+        ).add_to(map_)
     
     # Save map to HTML
-    map_html = m.get_root().render()
+    map_html = map_.get_root().render()
     
     return map_html
 

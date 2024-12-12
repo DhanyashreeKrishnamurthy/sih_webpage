@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +11,13 @@
   <!-- Leaflet Draw CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
 </head>
+
 <body>
   <div class="container">
     <!-- Simulation Panel -->
     <div class="simulation">
       <input type="file" id="simulation-upload" accept="video/mp4,video/avi">
-      <video id="simulation-viewer" controls></video>
+      <video id="simulation-viewer" controls style="display: none;"></video>
       <p id="upload-message">Upload a simulation file to view here.</p>
     </div>
 
@@ -31,12 +33,8 @@
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td>Drone 1</td><td>75</td><td>Active</td></tr>
-            <tr><td>Drone 2</td><td>90</td><td>Active</td></tr>
-            <tr><td>Drone 3</td><td>60</td><td>Inactive</td></tr>
-            <tr><td>Drone 4</td><td>50</td><td>Active</td></tr>
-            <tr><td>Drone 5</td><td>30</td><td>Down</td></tr>
+          <tbody id="drone-table-body">
+            <!-- Data will be inserted here by JS -->
           </tbody>
         </table>
       </div>
@@ -50,12 +48,8 @@
               <th>Location</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td>John</td><td>Sector 1</td></tr>
-            <tr><td>Anna</td><td>Sector 2</td></tr>
-            <tr><td>Tom</td><td>Sector 3</td></tr>
-            <tr><td>Kate</td><td>Sector 4</td></tr>
-            <tr><td>Mike</td><td>Sector 5</td></tr>
+          <tbody id="people-table-body">
+            <!-- Data will be inserted here by JS -->
           </tbody>
         </table>
       </div>
@@ -95,7 +89,55 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <!-- Leaflet Draw JS -->
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
   <script>
+    // Dummy Data for Drone Status Table
+    const droneData = [
+      { id: "Drone-1", battery: 85, status: "Active" },
+      { id: "Drone-2", battery: 90, status: "Active" },
+      { id: "Drone-3", battery: 45, status: "Down" },
+      { id: "Drone-4", battery: 60, status: "Active" },
+      { id: "Drone-5", battery: 30, status: "Inactive" },
+    ];
+
+    const droneTableBody = document.getElementById("drone-table-body");
+    droneData.forEach((drone) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${drone.id}</td><td>${drone.battery}%</td><td>${drone.status}</td>`;
+      droneTableBody.appendChild(row);
+    });
+
+    // Dummy Data for Found People Table
+    const peopleData = [
+      { name: "John Doe", location: "Sector A" },
+      { name: "Jane Smith", location: "Sector C" },
+      { name: "Emily Davis", location: "Sector B" },
+      { name: "Michael Brown", location: "Sector A" },
+      { name: "Anna White", location: "Sector D" },
+    ];
+
+    const peopleTableBody = document.getElementById("people-table-body");
+    peopleData.forEach((person) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${person.name}</td><td>${person.location}</td>`;
+      peopleTableBody.appendChild(row);
+    });
+
+    // Handle Simulation File Upload
+    const fileInput = document.getElementById("simulation-upload");
+    const videoViewer = document.getElementById("simulation-viewer");
+    const uploadMessage = document.getElementById("upload-message");
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        videoViewer.src = url;
+        videoViewer.style.display = "block";
+        uploadMessage.style.display = "none";
+      }
+    });
+
     // Initialize the map, centered on New Delhi
     var map = L.map('map').setView([28.6139, 77.2090], 13);
 
@@ -128,7 +170,7 @@
     map.addControl(drawControl);
 
     // Event listener for when a shape is drawn
-    map.on('draw:created', function(e) {
+    map.on('draw:created', function (e) {
       var layer = e.layer;
       drawnItems.addLayer(layer);
 
@@ -145,4 +187,5 @@
     });
   </script>
 </body>
+
 </html>

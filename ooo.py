@@ -5,6 +5,7 @@ import threading
 import queue
 import time
 import gradio as gr
+from IPython.display import IFrame
 
 # AirSim Camera Handler Class
 class AirSimCameraHandler:
@@ -96,62 +97,35 @@ class AirSimCameraHandler:
 airsim_handler = AirSimCameraHandler()
 
 def create_interactive_map():
-    """Generate an OpenLayers-based interactive map"""
-    map_html = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>OpenLayers Map</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
-        <script src="https://cdn.jsdelivr.net/npm/ol@latest/ol.js"></script>
-        <style>
-            #map {
-                width: 100%;
-                height: 400px;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="map"></div>
-        <script>
-            var map = new ol.Map({
-                target: 'map',
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    })
-                ],
-                view: new ol.View({
-                    center: ol.proj.fromLonLat([77.216721, 28.6448]), // Default coordinates
-                    zoom: 14
-                })
-            });
+    """Generate an OpenStreetMap HTML iframe"""
+    iframe = IFrame(
+        src="https://www.openstreetmap.org/export/embed.html?bbox=77.2000%2C28.6100%2C77.2200%2C28.6200&layer=mapnik",
+        width="100%",
+        height="400"
+    )
+    return iframe._repr_html_()
 
-            // Add interaction for area selection
-            var select = new ol.interaction.Select();
-            map.addInteraction(select);
-
-            var dragBox = new ol.interaction.DragBox();
-            map.addInteraction(dragBox);
-
-            dragBox.on('boxend', function() {
-                var extent = dragBox.getGeometry().getExtent();
-                alert('Selected area: ' + extent.join(', '));
-            });
-
-            dragBox.on('boxstart', function() {
-                console.log('Box selection started');
-            });
-        </script>
-    </body>
-    </html>
-    """
-    return map_html
+def update_camera_feed():
+    """Update camera feed"""
+    try:
+        # Ensure AirSim capture is started
+        airsim_handler.start_capture()
+        
+        # Get latest frame
+        latest_frame = airsim_handler.get_latest_frame()
+        
+        if latest_frame is not None:
+            return latest_frame
+        return None
+    except Exception as e:
+        print(f"Error updating camera feed: {e}")
+        return None
 
 def main():
     # Create Gradio interface
     with gr.Blocks() as demo:
-        live_feed = gr.Image(label="Live Drone Feed")
+        camera_feed = gr.Image(label="Drone Camera Feed")
+        interactive_map_html = gr.HTML(label="Interactive Map")
 
         drone_status = gr.Dataframe(
             headers=["Drone ID", "Battery (%)", "Status"],
@@ -172,11 +146,19 @@ def main():
             label="People Found"
         )
 
-        update_feed_btn = gr.Button("Get Live Feed")
-        update_feed_btn.click(
-            fn=lambda: airsim_handler.get_latest_frame(),
-            outputs=live_feed
+        start_btn = gr.Button("Start Drone Feed")
+        start_btn.click(
+            fn=update_camera_feed, 
+            outputs=camera_feed
         )
+
+        update_map_btn = gr.Button("Update Map")
+        update_map_btn.click(
+            fn=create_interactive_map,
+            outputs=interactive_map_html
+        )
+
+        demo.load(update_camera_feed, outputs=camera_feed, every=1)
 
     # Launch the demo
     demo.launch(server_name='127.0.0.1', server_port=7860)
