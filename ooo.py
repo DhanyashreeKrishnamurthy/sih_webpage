@@ -6,6 +6,10 @@ import queue
 import time
 import gradio as gr
 from IPython.display import IFrame
+from ultralytics import RTDETR
+
+# Load the YOLO model
+model = RTDETR("rtdetr.pt")
 
 # AirSim Camera Handler Class
 class AirSimCameraHandler:
@@ -55,7 +59,7 @@ class AirSimCameraHandler:
                     
                     self.frame_queue.put(img_rgb)
                 
-                time.sleep(0.1)  # Prevent overwhelming
+                # time.sleep(0.1)  # Prevent overwhelming
         except Exception as e:
             print(f"Frame Capture Error: {e}")
 
@@ -106,7 +110,7 @@ def create_interactive_map():
     return iframe._repr_html_()
 
 def update_camera_feed():
-    """Update camera feed"""
+    """Update camera feed and run detection on it"""
     try:
         # Ensure AirSim capture is started
         airsim_handler.start_capture()
@@ -115,7 +119,13 @@ def update_camera_feed():
         latest_frame = airsim_handler.get_latest_frame()
         
         if latest_frame is not None:
-            return latest_frame
+            # Run object detection on the frame
+            results = model.predict(latest_frame, show=True, classes=[0])  # Assuming class 0 for detection
+            
+            # Process the result, add annotations (bounding boxes, etc.) to the frame
+            annotated_frame = results[0].plot()  # Assuming results is a list of detections
+            return annotated_frame
+        
         return None
     except Exception as e:
         print(f"Error updating camera feed: {e}")
