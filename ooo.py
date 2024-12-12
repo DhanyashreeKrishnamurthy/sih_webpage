@@ -59,7 +59,7 @@ class AirSimCameraHandler:
                     
                     self.frame_queue.put(img_rgb)
                 
-                # time.sleep(0.1)  # Prevent overwhelming
+                time.sleep(0.1)  # Prevent overwhelming
         except Exception as e:
             print(f"Frame Capture Error: {e}")
 
@@ -150,11 +150,6 @@ def main():
             label="People Found"
         )
 
-        start_btn = gr.Button("Start Drone Feed")
-        start_btn.click(
-            fn=update_camera_feed, 
-            outputs=camera_feed
-        )
 
         update_map_btn = gr.Button("Update Map")
         update_map_btn.click(

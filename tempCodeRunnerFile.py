@@ -150,6 +150,11 @@ def main():
             label="People Found"
         )
 
+        start_btn = gr.Button("Start Drone Feed")
+        start_btn.click(
+            fn=update_camera_feed, 
+            outputs=camera_feed
+        )
 
         update_map_btn = gr.Button("Update Map")
         update_map_btn.click(
