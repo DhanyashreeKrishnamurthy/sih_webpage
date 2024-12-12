@@ -124,25 +124,19 @@ def update_camera_feed():
 def main():
     # Create Gradio interface
     with gr.Blocks() as demo:
-        camera_feed = gr.Image(label="Drone Camera Feed")
-        interactive_map_html = gr.HTML(label="Interactive Map")
-
+        with gr.Row():  # Use a Row for side-by-side layout
+            camera_feed = gr.Image(label="Drone Camera Feed", elem_id="camera_feed")
+            interactive_map_html = gr.HTML(label="Interactive Map", elem_id="interactive_map")
+        
         drone_status = gr.Dataframe(
             headers=["Drone ID", "Battery (%)", "Status"],
-            value=[
-                ["Drone-1", 75, "Active"],
-                ["Drone-2", 90, "Active"],
-                ["Drone-3", 60, "Inactive"]
-            ],
+            value=[["Drone-1", 75, "Active"], ["Drone-2", 90, "Active"], ["Drone-3", 60, "Inactive"]],
             label="Drone Status"
         )
 
         people_found = gr.Dataframe(
             headers=["Name", "Location"],
-            value=[
-                ["John", "Sector 1"],
-                ["Anna", "Sector 2"]
-            ],
+            value=[["John", "Sector 1"], ["Anna", "Sector 2"]],
             label="People Found"
         )
 
